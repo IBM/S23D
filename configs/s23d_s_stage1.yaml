@@ -1,0 +1,63 @@
+defaults:
+  - nexusnet_config
+  - _self_
+
+datamodule:
+  _target_: smiles23d.data.geom.GEOMDatamodule
+  input_dir: ${oc.env:SMILES23D_DATA}
+  batch_size: 128
+  shuffle: False
+  mask_prob: 0.01
+  removeHs: True
+  num_workers: 8
+  val_dataloader_config: null
+
+tokenizer:
+  _target_: smiles23d.tokenizers.PileTokenizer
+
+module:
+  _target_: smiles23d.modules.diffusion.DiffusionLM
+  diffusion_model:
+    _target_: smiles23d.modules.diffusion.CoMVPSDE
+    beta_s: 0
+    beta_e: 18.0
+    center_score: true
+    scale: 20.0
+  score_network:
+    _target_: smiles23d.modules.diffusion.Transformer
+    layers: [1,0,9]
+    n_embd: 256
+    n_head: 8
+    n_aux_tokens: 4
+    n_time_basis: 10
+    translation_augmentation: 30.0
+    graph_encoder_kwargs:
+      kind: GPS
+      random_bits: 0
+      use_degree: true
+      use_gcn: False
+      use_charges: True
+      use_bonds: True
+    point_encoder_kwargs:
+      kind: ScaleAdapt
+      n_sin_basis: 6
+      xyz: true
+      basis_scale: 0.05
+      first_layer_only: true
+  optimizer:
+    lr: 0.0001
+    weight_decay: 0.001
+
+task:
+  _target_: smiles23d.nexusnet.Task
+  checkpoint:
+    root_dir: checkpoints
+    epoch_dir: epoch_checkpoints
+    epoch_filename: "s23d_s_epoch_{epoch}"
+    save_datamodule_state: True
+    n_steps: 50000
+  restart: true
+  trainer:
+    max_epochs: 100
+    gradient_clip_val: 2.0
+    use_distributed_sampler: False

@@ -1,0 +1,32 @@
+datamodule:
+  _target_: smiles23d.data.geom.GEOMDatamodule
+  input_dir: ${oc.env:SMILES23D_DATA}/zarr
+  index_dir: ${oc.env:SMILES23D_DATA}/index/eval_index
+  predict_split: test_1000
+  start_idx: 0
+  end_idx: 208304
+  batch_size: 64
+  shuffle: False
+  removeHs: False
+  mask_prob: 0.0
+  num_workers: 0
+  samples_per_molecule: 1
+
+tokenizer:
+  _target_: smiles23d.tokenizers.PileTokenizer
+
+test:
+  _target_: smiles23d.prediction.S23DPredict
+  checkpoint: ???
+  save_path: outputs/s23d_b_eval2k
+  save_mol_file: mols.pkl
+  save_rmsd_file: rmsds.pkl
+  n_cpus: 32
+  diffusion_kwargs:
+    kind: VPSDE
+    n_steps: 300
+  trainer:
+    accelerator: gpu
+    devices: 1
+
+clearml: null

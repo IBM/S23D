@@ -1,7 +1,5 @@
 # MAINTAINERS
 
-Mo McElaney - mmcelaney@us.ibm.com
+Timothy Rumbell - thrumbel@us.ibm.com
 
-JJ Asghar - jja@ibm.com
-
-Brad Topol - btopol@us.ibm.com
+Viatcheslav Gurev - vgurev@us.ibm.com

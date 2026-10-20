@@ -1,0 +1,99 @@
+[build-system]
+requires = ["setuptools>=77", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "smiles23d"
+description = "Generation of 3D coordinates from SMILES"
+authors = [
+  { name = "Viatcheslav Gurev", email = "vgurev@us.ibm.com" },
+  { name = "Timothy Rumbell", email = "thrumbel@us.ibm.com" },
+]
+version = "1.0.0"
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Chemistry",
+]
+requires-python = ">=3.11"
+dependencies = [
+  "numpy",
+  "scipy",
+  "torch>=2.6",
+  "lightning>=2.6",
+  "omegaconf",
+  "hydra-core",
+  "clearml>=2.0.2",
+  "tensorboardX",
+  "rdkit",
+  "posebusters",
+  "py3dmol",
+  "jsonlines",
+  "igraph>=0.10",
+  "litdata==0.2.30",
+  "zarr>=3.0,<3.1",
+  "numcodecs",
+  "msgpack",
+  "msgpack-numpy",
+  "cramjam",
+  "huggingface_hub>=1.0",
+  "safetensors",
+]
+
+[project.scripts]
+s23dtrain = "smiles23d.nexusnet.main:main"
+s23dtest = "smiles23d.nexusnet.main:test"
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[project.urls]
+Repository = "https://github.com/IBM/S23D"
+Paper = "https://arxiv.org/abs/2506.19834"
+Issues = "https://github.com/IBM/S23D/issues"
+
+[tool.setuptools.packages.find]
+include = ["smiles23d*"]
+
+[tool.black]
+line-length = 88
+skip-string-normalization = false
+target-version = ['py311']
+
+[tool.ruff]
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+  "UP",   # pyupgrade
+  "D",    # pydocstyle
+  "PT",   # pytest style checking
+  "C4",   # comprehensions style checking
+  "F",    # pyflakes
+  "W605", # pycodestyle: invalid-escape-sequence
+  "I",    # isort
+]
+ignore = [
+  "D100", # pydocstyle: Missing docstring in public module
+  "D101", # pydocstyle: Missing docstring in public class
+  "D102", # pydocstyle: Missing docstring in public method
+  "D103", # pydocstyle: Missing docstring in public function
+  "D105", # pydocstyle: Missing docstring in magic method
+  "D107", # pydocstyle: Missing docstring in __init__
+  "D203", # pydocstyle: 1 blank line required before class docstring
+  "D205", # pydocstyle: 1 blank line required between summary line and description
+  "D212", # pydocstyle: Multi-line docstring summary should start at the first line
+  "D401", # pydocstyle: First line of docstring should be in imperative mood
+  "D413", # pydocstyle: Missing blank line after last section
+  "D417", # pydocstyle: Missing argument descriptions in the docstring
+  "F841", # pyflakes: Local variable is assigned to but never used
+]
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["I001"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

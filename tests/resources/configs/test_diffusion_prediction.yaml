@@ -1,0 +1,32 @@
+defaults:
+  - nexusnet_config
+  - _self_
+
+datamodule:
+  _target_: smiles23d.data.geom.GEOMDatamodule
+  input_dir: ${oc.env:SMILES23D_DATA}/zarr
+  index_dir: ${oc.env:SMILES23D_DATA}/index/eval_index
+  predict_split: test
+  batch_size: 16
+  shuffle: False
+  removeHs: False
+  mask_prob: 0.0
+  num_workers: 0
+  start_idx: 0
+  end_idx: 16
+
+tokenizer:
+  _target_: smiles23d.tokenizers.PileTokenizer
+
+test:
+  _target_: smiles23d.prediction.S23DPredict
+  checkpoint: ???
+  save_path: test_output
+  save_jsonl_file_prefix: output
+  save_mol_file: output_mols.pkl
+  save_rmsd_file: output_rmsds.pkl
+  diffusion_kwargs:
+    kind: VPSDE
+    n_steps: 300
+  trainer:
+    limit_predict_batches: 10
